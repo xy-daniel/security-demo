@@ -2,6 +2,7 @@ package com.daniel.web.controller;
 
 import com.daniel.dto.User;
 import com.daniel.dto.UserQueryCondition;
+import com.daniel.exception.UserNotExistException;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -38,25 +39,22 @@ public class UserController {
     @GetMapping("/{id:\\d+}")
     @JsonView(User.UserDetailView.class)
     public User getInfo(@PathVariable(value = "id") String id) {
-        System.out.println("id=" + id);
-        User user = new User();
-        user.setUsername("tom");
-        return user;
+
+//        throw new RuntimeException("user not exist");
+
+        throw new UserNotExistException(id);
+
+//        System.out.println("id=" + id);
+//        User user = new User();
+//        user.setUsername("tom");
+//        return user;
     }
 
     @PostMapping
     @JsonView(User.UserSimpleView.class)
-    public User create(@Valid @RequestBody User user, BindingResult errors) {
-        System.out.println(user.getId());
-        System.out.println(user.getUsername());
-        System.out.println(user.getPassword());
-        System.out.println(user.getBirthday());
-        if (errors.hasErrors()) {
-            errors.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
-            user.setId("-1");
-        } else {
-            user.setId("1");
-        }
+    public User create(@Valid @RequestBody User user) {
+        user.setId("1");
+        System.out.println(user);
         return user;
     }
 

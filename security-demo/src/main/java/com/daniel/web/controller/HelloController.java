@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author daniel
  */
-@RestController("/hello")
+@RestController
 public class HelloController {
 
     /**
      * 测试
      * @return 网页返回值
      */
-    @GetMapping
+    @GetMapping(("/hello"))
     public String hello() {
         return "hello spring security";
     }
