@@ -7,6 +7,8 @@ import java.io.IOException;
  * 自定义过滤器
  * 未使用注解注入spring,用来模拟三方过滤器的注入
  *
+ * 缺点:拿不到请求类及方法
+ *
  * @author daniel
  */
 public class TimeFilter implements Filter {

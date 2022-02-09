@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 自定义拦截器
  *
+ * 缺点:拿不到请求的值
+ *
  * @author daniel
  */
 @Component
