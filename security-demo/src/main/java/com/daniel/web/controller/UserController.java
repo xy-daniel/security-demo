@@ -40,10 +40,11 @@ public class UserController {
     @JsonView(User.UserDetailView.class)
     public User getInfo(@PathVariable(value = "id") String id) {
 
-//        throw new RuntimeException("user not exist");
+        throw new RuntimeException("user not exist");
+//
+//        throw new UserNotExistException(id);
 
-        throw new UserNotExistException(id);
-
+//        System.out.println("开始正式调用getInfo资源......");
 //        System.out.println("id=" + id);
 //        User user = new User();
 //        user.setUsername("tom");
