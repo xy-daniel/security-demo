@@ -1,18 +1,22 @@
 package com.daniel.dto;
 
+import com.daniel.validator.MyConstraint;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Past;
 import java.util.Date;
 
 /**
  * 用户类 - 返回值封装类
+ *
+ * @author daniel
  */
 public class User {
 
-    public interface UserSimpleView { };
+    public interface UserSimpleView { }
 
-    public interface UserDetailView extends UserSimpleView { };
+    public interface UserDetailView extends UserSimpleView { }
 
     /**
      * 主键
@@ -22,14 +26,16 @@ public class User {
     /**
      * 用户名
      */
+    @MyConstraint(message = "这是一个测试")
     private String username;
 
     /**
      * 密码
      */
-    @NotBlank
+    @NotBlank(message = "密码不能为空")
     private String password;
 
+    @Past(message = "生日必须是过去的时间")
     private Date birthday;
 
     @JsonView(UserSimpleView.class)
@@ -66,5 +72,15 @@ public class User {
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", birthday=" + birthday +
+                '}';
     }
 }

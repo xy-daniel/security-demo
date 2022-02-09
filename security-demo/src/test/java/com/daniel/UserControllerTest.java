@@ -1,7 +1,6 @@
 package com.daniel;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -16,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -107,6 +108,29 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andReturn().getResponse().getContentAsString();
         System.out.println(result);
+    }
+
+    @Test
+    public void whenUpdateSuccess() throws Exception {
+        Date birthday = new Date(LocalDateTime.now().plusYears(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        String content = "{\"username\":\"tom\",\"password\":null,\"birthday\":\"" + birthday.getTime() + "\"}";
+        String result = mockMvc.perform(
+                        put("/user/1")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(content)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+
+    @Test
+    public void whenDeleteSuccess() throws Exception {
+        mockMvc.perform(
+                delete("/user/1")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isOk());
     }
 
 }

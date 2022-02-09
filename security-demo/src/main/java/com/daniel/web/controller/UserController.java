@@ -14,6 +14,11 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 用户资源
+ *
+ * @author daniel
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -23,10 +28,6 @@ public class UserController {
     public List<User> query(UserQueryCondition condition, @PageableDefault(page = 1, size = 20, sort = "username,asc") Pageable pageable) {
         System.out.println(ReflectionToStringBuilder.toString(condition, ToStringStyle.MULTI_LINE_STYLE));
         System.out.println(ReflectionToStringBuilder.toString(pageable, ToStringStyle.MULTI_LINE_STYLE));
-
-//    public List<User> query(@RequestParam(value = "username", required = false, defaultValue = "zsl") String username) {
-//        System.out.println("username:" + username);
-
         ArrayList<User> userArrayList = new ArrayList<>();
         userArrayList.add(new User());
         userArrayList.add(new User());
@@ -34,7 +35,7 @@ public class UserController {
         return userArrayList;
     }
 
-    @GetMapping( "/{id:\\d+}")
+    @GetMapping("/{id:\\d+}")
     @JsonView(User.UserDetailView.class)
     public User getInfo(@PathVariable(value = "id") String id) {
         System.out.println("id=" + id);
@@ -59,5 +60,22 @@ public class UserController {
         return user;
     }
 
+    @PutMapping("/{id:\\d+}")
+    @JsonView(User.UserSimpleView.class)
+    public User update(@PathVariable(value = "id") String id, @Valid @RequestBody User user, BindingResult errors) {
+        System.out.println(id);
+        System.out.println(user.toString());
+        if (errors.hasErrors()) {
+            errors.getAllErrors().forEach(error -> System.out.println(error.getDefaultMessage()));
+            user.setId("-1");
+        } else {
+            user.setId(id);
+        }
+        return user;
+    }
 
+    @DeleteMapping("/{id:\\d+}")
+    public void delete(@PathVariable String id) {
+        System.out.println(id);
+    }
 }
