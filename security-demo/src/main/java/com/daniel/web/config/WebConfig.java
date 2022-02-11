@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -49,4 +50,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return filterRegistrationBean;
     }
 
+    /**
+     * 配置异步支持
+     */
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        //注册Callable方式异步请求拦截器
+//        configurer.registerCallableInterceptors();
+        //注册Deferred方式异步请求拦截器
+//        configurer.registerDeferredResultInterceptors();
+        //配置异步请求默认的超时时间
+//        configurer.setDefaultTimeout(3000);
+        //设置自己的线程池
+//        configurer.setTaskExecutor();
+    }
 }
