@@ -1,5 +1,6 @@
 package com.daniel.security.browser.authentication;
 
+import com.daniel.security.browser.support.SimpleResponse;
 import com.daniel.security.core.properties.LoginType;
 import com.daniel.security.core.properties.SecurityProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +43,8 @@ public class DanielAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         if (LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())) {
             response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(exception));
+//            response.getWriter().write(objectMapper.writeValueAsString(exception));
+            response.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(exception.getMessage())));
         } else {
             super.onAuthenticationFailure(request, response, exception);
         }

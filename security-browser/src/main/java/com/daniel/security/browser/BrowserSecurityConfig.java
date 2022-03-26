@@ -1,6 +1,7 @@
 package com.daniel.security.browser;
 
 import com.daniel.security.core.properties.SecurityProperties;
+import com.daniel.security.core.validate.code.ValidateCodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * 浏览器端安全校验配置
@@ -31,7 +33,14 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
+        validateCodeFilter.setAuthenticationFailureHandler(danielAuthenticationFailureHandler);
+        validateCodeFilter.setSecurityProperties(securityProperties);
+        validateCodeFilter.afterPropertiesSet();
+
         http
+                .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 //表单登录
                 .formLogin()
                 //自定义表单登录页面(缺点是如果不是浏览器访问仍然返回静态登录页面,需要改造)
@@ -47,7 +56,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //放通登录页面请求
 //                .antMatchers("/login.html").permitAll()
-                .antMatchers("/authentication/require", securityProperties.getBrowser().getLoginPage()).permitAll()
+                .antMatchers("/authentication/require",
+                        securityProperties.getBrowser().getLoginPage(),
+                        "/code/image").permitAll()
                 //其他任何请求需要登录认证
                 .anyRequest().authenticated()
                 //关闭跨站请求伪造防护
