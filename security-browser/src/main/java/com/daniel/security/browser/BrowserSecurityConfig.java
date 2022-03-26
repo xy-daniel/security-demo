@@ -7,11 +7,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 /**
  * 浏览器端安全校验配置
@@ -28,6 +33,21 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler danielAuthenticationFailureHandler;
 
+
+    //记住我配置
+    @Autowired
+    private DataSource dataSource;
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+//        tokenRepository.setCreateTableOnStartup(true);
+        return tokenRepository;
+    }
+    @Autowired
+    private UserDetailsService userDetailsService;
+    //记住我配置
+
     /**
      * HttpSecurity配置
      */
@@ -41,27 +61,20 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
-                //表单登录
                 .formLogin()
-                //自定义表单登录页面(缺点是如果不是浏览器访问仍然返回静态登录页面,需要改造)
-//                .loginPage("/login.html")
-                //是否需要认证时security通过过滤器判断的,如果需要进行身份认证就跳转到配置的路径(无论是静态页面还是控制器)
-                .loginPage("/authentication/require")
-                //自定义登录请求地址(默认/login)
-                .loginProcessingUrl("/authentication/form")
-                .successHandler(danielAuthenticationSuccessHandler)
-                .failureHandler(danielAuthenticationFailureHandler)
-                .and()
-                //请求认证
-                .authorizeRequests()
-                //放通登录页面请求
-//                .antMatchers("/login.html").permitAll()
-                .antMatchers("/authentication/require",
+                    .loginPage("/authentication/require")
+                    .loginProcessingUrl("/authentication/form")
+                    .successHandler(danielAuthenticationSuccessHandler)
+                    .failureHandler(danielAuthenticationFailureHandler)
+                .and().rememberMe()
+                    .tokenRepository(persistentTokenRepository())
+                    .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())
+                .userDetailsService(userDetailsService)
+                .and().authorizeRequests()
+                    .antMatchers("/authentication/require",
                         securityProperties.getBrowser().getLoginPage(),
                         "/code/image").permitAll()
-                //其他任何请求需要登录认证
-                .anyRequest().authenticated()
-                //关闭跨站请求伪造防护
+                    .anyRequest().authenticated()
                 .and().csrf().disable();
     }
 

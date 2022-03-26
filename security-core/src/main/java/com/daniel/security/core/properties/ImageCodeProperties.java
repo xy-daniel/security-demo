@@ -45,7 +45,7 @@ public class ImageCodeProperties {
     /**
      * 允许配置校验验证码的接口
      */
-    private String url;
+    private String url = "";
 
     public String getUrl() {
         return url;
