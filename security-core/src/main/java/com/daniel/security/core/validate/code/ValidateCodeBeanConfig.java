@@ -1,7 +1,8 @@
-package com.daniel.security.core.properties;
+package com.daniel.security.core.validate.code;
 
-import com.daniel.security.core.validate.code.ImageCodeGenerator;
-import com.daniel.security.core.validate.code.ValidateCodeGenerator;
+import com.daniel.security.core.properties.SecurityProperties;
+import com.daniel.security.core.validate.code.sms.DefaultSmsCodeSender;
+import com.daniel.security.core.validate.code.sms.SmsCodeSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,15 @@ public class ValidateCodeBeanConfig {
         ImageCodeGenerator codeGenerator = new ImageCodeGenerator();
         codeGenerator.setSecurityProperties(securityProperties);
         return codeGenerator;
+    }
+
+    /**
+     * 找不到已smsCodeSender为名的bean时才会使用当前bean
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "smsCodeSender")
+    public SmsCodeSender smsCodeSender() {
+        return new DefaultSmsCodeSender();
     }
 
 }
