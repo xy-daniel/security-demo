@@ -1,7 +1,7 @@
 package com.daniel.code;
 
-import com.daniel.security.core.validate.code.ImageCode;
-import com.daniel.security.core.validate.code.ValidateCodeGenerator;
+import com.daniel.security.core.validateCode.sessionStrategyData.ImageCode;
+import com.daniel.security.core.validateCode.generator.ValidateCodeGenerator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 

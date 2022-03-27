@@ -1,11 +1,13 @@
 package com.daniel.security.core.properties;
 
+import com.daniel.security.core.constant.SecurityConstants;
+
 public class BrowserProperties {
 
     /**
      * 默认登录页
      */
-    private String loginPage = "/login.html";
+    private String loginPage = SecurityConstants.DEFAULT_LOGIN_PAGE_URL;
 
     /**
      * 默认登录类型
